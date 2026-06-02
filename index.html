@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Biblioteca do Futuro - Login</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Blibioteca do Futuro</h1>
+        <div class="login">
+            <h2>Via de Cadastro</h2>
+            <br>
+            <input type="text" id="NomeCompleto" placeholder="Insira seu nome completo">
+            <input type="text" id="CPF" placeholder="Insira seu CPF" maxlength="11">
+            <input type="text" id="Email" placeholder="Insira seu E-mail">
+            
+            <button type="button" id="btn-acessar" onclick="fazerLogin()">Acessar Blibioteca</button>
+        </div>
+
+        <div class="busca-container">
+            <ul id="lista-clientes"></ul>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

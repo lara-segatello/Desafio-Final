@@ -1,0 +1,98 @@
+/* Configurações Globais (Reset) */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    width: 100%;
+    max-width: 450px;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #1a1a1a;
+    margin-bottom: 25px;
+    font-size: 2rem;
+}
+
+/* Card de Login / Cadastro */
+.login {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.login h2 {
+    color: #4a4a4a;
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Customização dos Inputs - Alinhamento do CPF Corrigido aqui */
+.login input {
+    width: 100%;
+    padding: 12px 16px;
+    margin-bottom: 15px;
+    border: 1px solid #ccd0d5;
+    border-radius: 8px;
+    font-size: 1rem;
+    display: block;
+    transition: all 0.3s ease;
+    outline: none;
+    margin-top: 10px;
+}
+
+.login input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+/* Botão de Envio */
+.login button {
+    width: 100%;
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 14px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+    display: block;
+    margin-top: 15px;
+}
+
+.login button:hover {
+    background-color: #0056b3;
+}
+
+/* Área de busca reserva inferior */
+.busca-container {
+    margin-top: 20px;
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+}
+
+#lista-clientes {
+    list-style: none;
+    text-align: left;
+    background: #fff;
+    border-radius: 8px;
+    padding: 10px;
+}
