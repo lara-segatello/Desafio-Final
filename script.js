@@ -1,12 +1,8 @@
-// =========================================================================
-// 1. GESTÃO DE PERSISTÊNCIA (localStorage)
-// =========================================================================
-const dadosSalvos = localStorage.getItem('clientes');
-let clientes = dadosSalvos ? JSON.parse(dadosSalvos) : [];
 
-// =========================================================================
-// 2. SISTEMA DE LOGIN E DIRECIONAMENTO INTELIGENTE
-// =========================================================================
+let clientes = localStorage.getItem('clientes') ? JSON.parse(localStorage.getItem('clientes')) : [];
+let livroSelecionadoCache = null; // Armazena o livro clicado em tempo de execução
+
+
 function fazerLogin() {
     const nomeInput = document.getElementById('NomeCompleto').value.trim();
     const cpfInput = document.getElementById('CPF').value.trim();
@@ -17,53 +13,51 @@ function fazerLogin() {
         return;
     }
 
-    // Se digitado 'admin' (independente de maiúsculas/minúsculas) redireciona para empréstimos
-    if (nomeInput.toLowerCase() === 'admin') {
-        window.location.href = "emprestimo.html";
-    } 
-    // Qualquer outro nome salva no banco local e redireciona para a busca de livros
-    else {
-        const novoCliente = {
-            id: Date.now(),
-            nome: nomeInput,
-            cpf: cpfInput || "Não informado",
-            email: emailInput
-        };
+    // Criação do novo objeto de leitura em conformidade com o briefing
+    const novoCliente = {
+        id: Date.now(),
+        nome: nomeInput,
+        cpf: cpfInput || "Não informado",
+        email: emailInput
+    };
 
-        clientes.push(novoCliente);
-        localStorage.setItem('clientes', JSON.stringify(clientes));
+    // Insere e sincroniza com o banco local
+    clientes.push(novoCliente);
+    localStorage.setItem('clientes', JSON.stringify(clientes));
 
-        window.location.href = "busca.html";
-    }
+    // Limpa os campos do formulário para o próximo input
+    document.getElementById('NomeCompleto').value = '';
+    document.getElementById('CPF').value = '';
+    document.getElementById('Email').value = '';
+
+    // Atualiza os componentes dependentes na tela instantaneamente
+    renderizarClientes();
+    atualizarSelectClientes();
+    alert(`Cliente "${novoCliente.nome}" cadastrado com sucesso!`);
 }
 
-// Renderiza a lista se o elemento correspondente existir na página atual
 function renderizarClientes() {
     const listaUI = document.getElementById('lista-clientes');
-    if (!listaUI) return; 
+    if (!listaUI) return;
 
     listaUI.innerHTML = '';
     clientes.forEach(cliente => {
         const li = document.createElement('li');
-        li.textContent = `${cliente.nome} (${cliente.cpf}) (${cliente.email})`;
+        li.textContent = `${cliente.nome} (${cliente.cpf})`;
         listaUI.appendChild(li);
     });
 }
 
-// =========================================================================
-// 3. BUSCA INTELIGENTE DE LIVROS (Async & API para busca.html)
-// =========================================================================
-const inputBusca = document.getElementById('input-busca');
+
 const btnBuscar = document.getElementById("btn-buscar");
+const inputBusca = document.getElementById('input-busca');
 const resultadoBusca = document.getElementById('resultado-busca');
 
-// Ativa o evento apenas se estiver na página correta (busca.html)
 if (btnBuscar) {
     btnBuscar.addEventListener('click', buscarLivro);
 }
 
 async function buscarLivro() {
-    // Correção: capturando o valor através do atributo '.value'
     const termoBusca = inputBusca.value.trim();
 
     if (!termoBusca) {
@@ -71,62 +65,89 @@ async function buscarLivro() {
         return;
     }
 
-    resultadoBusca.innerHTML = "<p>Buscando livro...</p>";
+    // Cria um elemento temporário de carregamento sem limpar o histórico de baixo
+    const itemCarregando = document.createElement('p');
+    itemCarregando.id = "feedback-carregando";
+    itemCarregando.style = "color: #718096; font-style: italic; font-size: 0.9rem;";
+    itemCarregando.textContent = "Buscando livro...";
+    resultadoBusca.prepend(itemCarregando);
 
     try {
         const url = `https://openlibrary.org/search.json?title=${encodeURIComponent(termoBusca)}`;
         const resposta = await fetch(url);
-        // Correção: alterado de 'reply' para 'resposta'
         const dados = await resposta.json();
 
-        // Correção: corrigido erro de digitação de 'leght' para 'length'
+        // Remove o elemento de feedback de carregamento
+        const loader = document.getElementById('feedback-carregando');
+        if (loader) loader.remove();
+
         if (dados.docs && dados.docs.length > 0) {
             const primeiroLivro = dados.docs[0];
-            mostrarLivroNaTela(primeiroLivro);
+            adicionarLivroAoPainel(primeiroLivro);
+            inputBusca.value = ''; // Limpa a barra de pesquisa
         } else {
-            resultadoBusca.innerHTML = "<p>Nenhum livro encontrado com esse nome.</p>";
+            alert("Nenhum livro encontrado com esse nome.");
         }
     } catch (erro) {
         console.error("Erro ao buscar livro:", erro);
-        resultadoBusca.innerHTML = "<p>Ocorreu um erro ao buscar o livro. Tente novamente.</p>";
+        const loader = document.getElementById('feedback-carregando');
+        if (loader) loader.remove();
+        alert("Ocorreu um erro ao buscar o livro. Tente novamente.");
     }
 }
 
-function mostrarLivroNaTela(livro) {
+// Adiciona um card novo ao topo da lista, mantendo os anteriores na tela
+function adicionarLivroAoPainel(livro) {
     const titulo = livro.title;
     const autor = livro.author_name ? livro.author_name[0] : "Autor Desconhecido";
     const urlCapa = livro.cover_i
         ? `https://covers.openlibrary.org/b/id/${livro.cover_i}-M.jpg`
         : 'https://via.placeholder.com/150x200?text=Sem+Capa';
 
-    // Armazena em cache o livro pesquisado para ser recuperado na aba de empréstimo posterior
-    localStorage.setItem('livro_selecionado', JSON.stringify({ titulo, autor, urlCapa }));
+    const divCard = document.createElement('div');
+    divCard.className = 'card-livro';
+    
+    // Escapa aspas simples das strings para evitar quebra de sintaxe no HTML
+    const tituloEscapado = titulo.replace(/'/g, "\\'");
+    const autorEscapado = autor.replace(/'/g, "\\'");
 
-    resultadoBusca.innerHTML = `
-        <div class="card-livro">
-            <img src="${urlCapa}" alt="Capa do livro ${titulo}" style="max-width: 150px;">
-            <div>
-                <h3>${titulo}</h3>
-                <p><strong>Autor:</strong> ${autor}</p>
-                <br>
-                <button type="button" class="btn-buscar" style="padding: 8px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="selecionarParaEmprestimo('${titulo.replace(/'/g, "\\'")}', '${autor.replace(/'/g, "\\'")}')">
-                    Selecionar para Empréstimo
-                </button>
-            </div>
+    divCard.innerHTML = `
+        <img src="${urlCapa}" alt="Capa">
+        <div class="card-livro-info">
+            <h3>${titulo}</h3>
+            <p><strong>Autor:</strong> ${autor}</p>
+            <button type="button" class="btn-selecionar-livro" onclick="selecionarParaEmprestimo(this, '${tituloEscapado}', '${autorEscapado}', '${urlCapa}')">
+                Selecionar para Empréstimo
+            </button>
         </div>
     `;
+
+    // Insere no topo da lista de exibição do Quadro 2
+    resultadoBusca.prepend(divCard);
 }
 
-function selecionarParaEmprestimo(titulo, autor) {
-    alert(`Livro "${titulo}" de ${autor} selecionado com sucesso!`);
+function selecionarParaEmprestimo(botao, titulo, autor, urlCapa) {
+    // Remove o estado visual "selecionado" de qualquer outro botão do painel
+    const botoes = document.querySelectorAll('.btn-selecionar-livro');
+    botoes.forEach(b => {
+        b.classList.remove('selecionado');
+        b.textContent = "Selecionar para Empréstimo";
+    });
+
+    // Destaca visualmente o card atualmente ativo
+    botao.classList.add('selecionado');
+    botao.textContent = "✓ Selecionar para Empréstimo";
+
+    // Guarda os metadados do livro ativo em memória cache
+    livroSelecionadoCache = { titulo, autor, urlCapa };
+    
+    // Atualiza a interface gráfica do Quadro 3
+    document.getElementById('texto-feedback-livro').innerHTML = `Livro selecionado: <strong>"${titulo}"</strong>`;
 }
 
-// =========================================================================
-// 4. CONTROLE DE EMPRÉSTIMOS E PERSISTÊNCIA (emprestimo.html)
-// =========================================================================
 function atualizarSelectClientes() {
     const select = document.getElementById('select-clientes');
-    if (!select) return; // Proteção de escopo para evitar quebra de página
+    if (!select) return;
 
     select.innerHTML = '<option value="">-- Escolha um cliente --</option>';
 
@@ -138,7 +159,6 @@ function atualizarSelectClientes() {
     });
 }
 
-// Lógica de encerramento de empréstimo disparada por clique de evento isolado
 const btnFinalizarSecao = document.querySelector('.btn-finalizarsecao');
 if (btnFinalizarSecao) {
     btnFinalizarSecao.addEventListener('click', () => {
@@ -150,20 +170,20 @@ if (btnFinalizarSecao) {
             return;
         }
 
-        const livroDaAPI = JSON.parse(localStorage.getItem('livro_selecionado'));
-        if (!livroDaAPI) {
-            alert("Por favor, busque e selecione um livro na aba de pesquisas primeiro!");
+        if (!livroSelecionadoCache) {
+            alert("Por favor, busque e selecione um livro no painel de acervo primeiro!");
             return;
         }
 
-        // Regra de negócios das diretrizes: calcula o vencimento do prazo para 7 dias
+        // Regra de negócios das diretrizes: calcula o vencimento do prazo para 7 dias corridos
         let dataVencimento = new Date();
         dataVencimento.setDate(dataVencimento.getDate() + 7);
 
         const novoEmprestimo = {
+            id: Date.now(),
             cliente: clienteSelecionado,
-            titulo: livroDaAPI.title || livroDaAPI.titulo,
-            capa: livroDaAPI.urlCapa,
+            titulo: livroSelecionadoCache.titulo,
+            capa: livroSelecionadoCache.urlCapa,
             devolucao: dataVencimento.toLocaleDateString('pt-BR')
         };
 
@@ -171,10 +191,51 @@ if (btnFinalizarSecao) {
         listaEmprestimos.push(novoEmprestimo);
         localStorage.setItem('emprestimos', JSON.stringify(listaEmprestimos));
 
-        alert(`Empréstimo de "${novoEmprestimo.titulo}" finalizado para ${clienteSelecionado}! Devolução em: ${novoEmprestimo.devolucao}`);
+        alert(`Empréstimo de "${novoEmprestimo.titulo}" finalizado para ${clienteSelecionado}!`);
+        
+        // Reseta o cache de seleção e atualiza a lista de visualização
+        livroSelecionadoCache = null;
+        document.getElementById('texto-feedback-livro').textContent = "Nenhum livro pré-selecionado para empréstimo.";
+        
+        // Remove a marcação do botão selecionado no Quadro 2
+        const botoes = document.querySelectorAll('.btn-selecionar-livro');
+        botoes.forEach(b => {
+            b.classList.remove('selecionado');
+            b.textContent = "Selecionar para Empréstimo";
+        });
+
+        renderizarEmprestimosAtivos();
+        selectClientes.value = "";
     });
 }
 
-// Inicializações automáticas e seguras
+function renderizarEmprestimosAtivos() {
+    const containerEmprestimos = document.getElementById('registro-emprestimos-ativos');
+    if (!containerEmprestimos) return;
+
+    let listaEmprestimos = localStorage.getItem('emprestimos') ? JSON.parse(localStorage.getItem('emprestimos')) : [];
+    containerEmprestimos.innerHTML = '';
+
+    if (listaEmprestimos.length === 0) {
+        containerEmprestimos.innerHTML = "<p style='color:#a0aec0; font-size:0.85rem; font-style:italic;'>Nenhum empréstimo ativo.</p>";
+        return;
+    }
+
+    listaEmprestimos.forEach(emp => {
+        const card = document.createElement('div');
+        card.className = 'card-emprestimo-ativo';
+        card.innerHTML = `
+            <img src="${emp.capa}" alt="Capa">
+            <div class="card-emprestimo-ativo-info">
+                <h4>${emp.titulo}</h4>
+                <p>Locatário: <strong>${emp.cliente}</strong></p>
+                <p style="color: #2f855a; font-weight: bold;">Devolução: ${emp.devolucao}</p>
+            </div>
+        `;
+        containerEmprestimos.appendChild(card);
+    });
+}
+
 renderizarClientes();
 atualizarSelectClientes();
+renderizarEmprestimosAtivos();
