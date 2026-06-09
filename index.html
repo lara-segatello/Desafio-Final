@@ -4,58 +4,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Biblioteca</title>
 
-    <title>Cadastro</title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-    <link rel="stylesheet" href="style.css">
+        body{
+            background:#f0f4f8;
+            min-height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+        }
 
+        .login-card{
+            background:white;
+            width:400px;
+            padding:40px;
+            border-radius:12px;
+            box-shadow:0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .login-card h1{
+            text-align:center;
+            margin-bottom:30px;
+            color:#2c3e50;
+        }
+
+        .campo{
+            margin-bottom:20px;
+        }
+
+        .campo label{
+            display:block;
+            margin-bottom:6px;
+            font-weight:600;
+            color:#4a5568;
+        }
+
+        .campo input{
+            width:100%;
+            padding:12px;
+            border:1px solid #cbd5e0;
+            border-radius:6px;
+            font-size:15px;
+        }
+
+        .campo input:focus{
+            outline:none;
+            border-color:#3182ce;
+        }
+
+        .btn-login{
+            width:100%;
+            padding:14px;
+            border:none;
+            border-radius:8px;
+            background:#3182ce;
+            color:white;
+            font-size:16px;
+            font-weight:bold;
+            cursor:pointer;
+            transition:0.3s;
+        }
+
+        .btn-login:hover{
+            background:#2b6cb0;
+        }
+    </style>
 </head>
-
 <body>
 
-    <header>
-        <h1>Biblioteca do Futuro</h1>
-        <p>Cadastro de Clientes</p>
-    </header>
-
-    <div class="quadro">
-
-        <h2>👤 Cadastro</h2>
-
-        <div class="campo-grupo">
+    <div class="login-card">
+        <h1>📖 Biblioteca do Futuro</h1>
+        <div class="campo">
             <label>Nome</label>
-            <input type="text" id="NomeCompleto">
+            <input type="text" id="nomeLogin" placeholder="Digite seu nome">
         </div>
 
-        <div class="campo-grupo">
-            <label>CPF</label>
-            <input type="text" id="CPF">
+        <div class="campo">
+            <label>Senha</label>
+            <input type="password" id="senhaLogin" placeholder="Digite sua senha">
         </div>
 
-        <div class="campo-grupo">
-            <label>Email</label>
-            <input type="email" id="Email">
-        </div>
-
-        <button class="btn-azul" onclick="fazerLogin()">
-            Cadastrar
+        <button class="btn-login" onclick="fazerLoginSistema()">
+            Entrar
         </button>
-
-
-        <div class="titulo-sublista">
-            Clientes Cadastrados
-        </div>
-
-        <ul id="lista-clientes"></ul>
-
-         <a href="busca.html" class="btn-prosseguir">
-            Ir para Busca de Livros
-        </a>
-
     </div>
 
     <script src="script.js"></script>
 
 </body>
 
+</html>
 </html>
