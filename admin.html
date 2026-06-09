@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel Administrativo</title>
+<link rel="stylesheet" href="style.css">
+<style>
+
+.admin-topo{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.admin-topo h1{
+    color:#1a202c;
+}
+
+.admin-acoes{
+    display:flex;
+    gap:10px;
+}
+
+.btn-admin{
+    background:#3182ce;
+    color:white;
+    padding:12px 20px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    text-decoration:none;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+.btn-admin:hover{
+    background:#2b6cb0;
+}
+
+.grid-admin{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:25px;
+}
+
+@media(max-width:900px){
+    .grid-admin{
+        grid-template-columns:1fr;
+    }
+}
+
+.painel-box{
+    background:white;
+    border-radius:12px;
+    padding:25px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.05);
+}
+
+.painel-box h2{
+    margin-bottom:20px;
+    color:#2c3e50;
+}
+
+.card-admin{
+    background:#f7fafc;
+    border-left:4px solid #3182ce;
+    padding:15px;
+    border-radius:8px;
+    margin-bottom:15px;
+}
+
+.card-admin h3{
+    color:#1a202c;
+    margin-bottom:8px;
+}
+
+.card-admin p{
+    color:#4a5568;
+    margin-bottom:5px;
+}
+
+.btn-remover{
+    background:#e53e3e;
+    color:white;
+    border:none;
+    padding:10px 15px;
+    border-radius:6px;
+    cursor:pointer;
+    margin-top:10px;
+    transition:0.3s;
+}
+
+.btn-remover:hover{
+    background:#c53030;
+}
+
+.status-admin{
+    background:#ebf8ff;
+    border:1px solid #bee3f8;
+    padding:15px;
+    border-radius:8px;
+    margin-bottom:20px;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="admin-topo">
+
+    <h1>🛠 Painel Administrativo</h1>
+
+    <div class="admin-acoes">
+        <a href="busca.html" class="btn-admin">Buscar Livros</a>
+        <a href="login.html" class="btn-admin">Sair</a>
+    </div>
+
+</div>
+
+<div class="status-admin">
+    <strong>Administrador conectado:</strong>
+    ADMIN
+</div>
+
+<div class="grid-admin">
+
+    <!-- EMPRÉSTIMOS -->
+
+    <div class="painel-box">
+        <h2>📚 Empréstimos Ativos</h2>
+        <div id="lista-emprestimos-admin"></div>
+    </div>
+
+    <!-- CLIENTES -->
+
+    <div class="painel-box">
+        <h2>👤 Clientes Cadastrados</h2>
+        <div id="lista-clientes-admin"></div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

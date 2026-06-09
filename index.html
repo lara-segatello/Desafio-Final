@@ -1,378 +1,61 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biblioteca do Futuro - Painel de Controle</title>
-    <style>
-       
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
 
-        body {
-            background-color: #f0f4f8;
-            color: #333333;
-            min-height: 100vh;
-            padding: 30px 20px;
-        }
+    <title>Cadastro</title>
 
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
+    <link rel="stylesheet" href="style.css">
 
-        header h1 {
-            font-size: 2.2rem;
-            color: #1a1a1a;
-            font-weight: 700;
-        }
-
-        header p {
-            color: #6c757d;
-            font-size: 1rem;
-            margin-top: 5px;
-        }
-
-        /* Grid de Distribuição dos 3 Quadros Principais */
-        .painel-grid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(300px, 1fr));
-            gap: 25px;
-            max-width: 1400px;
-            margin: 0 auto;
-            align-items: start;
-        }
-
-        @media (max-width: 1024px) {
-            .painel-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Estilização dos Quadros (Cards) */
-        .quadro {
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            padding: 25px;
-            min-height: 500px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .quadro h2 {
-            font-size: 1.3rem;
-            color: #2c3e50;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 2px solid #ecf0f1;
-            padding-bottom: 10px;
-        }
-
-        /* Customização Padronizada e Alinhada de Inputs (Resolve Falha do CPF) */
-        .campo-grupo {
-            margin-bottom: 15px;
-        }
-
-        .campo-grupo label {
-            display: block;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #4a5568;
-            margin-bottom: 6px;
-        }
-
-        input[type="text"],
-        input[type="number"],
-        input[type="email"],
-        select {
-            width: 100% !important;
-            padding: 12px;
-            border: 1px solid #cbd5e0;
-            border-radius: 6px;
-            font-size: 0.95rem;
-            outline: none;
-            transition: all 0.2s ease;
-            background-color: #ffffff;
-        }
-
-        input:focus, select:focus {
-            border-color: #3182ce;
-            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
-        }
-
-        /* Inputs preenchidos ou focados específicos do gabarito */
-        .input-destaque {
-            background-color: #edf2f7 !important;
-        }
-
-        /* Botões Estilizados por Contexto */
-        button {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-            margin-top: 10px;
-        }
-
-        .btn-azul {
-            background-color: #3182ce;
-            color: white;
-        }
-
-        .btn-azul:hover {
-            background-color: #2b6cb0;
-        }
-
-        .btn-cinza {
-            background-color: #4a5568;
-            color: white;
-            width: auto;
-            padding: 12px 20px;
-            margin-top: 0;
-        }
-
-        .btn-cinza:hover {
-            background-color: #2d3748;
-        }
-
-        .btn-verde {
-            background-color: #38a169;
-            color: white;
-        }
-
-        .btn-verde:hover {
-            background-color: #2f855a;
-        }
-
-        /* Elementos da Área de Busca de Acervo */
-        .busca-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .busca-container input {
-            flex: 1;
-        }
-
-        /* Contêiner Rolável para não Quebrar o Layout */
-        .scroll-conteudo {
-            flex: 1;
-            overflow-y: auto;
-            max-height: 380px;
-            padding-right: 5px;
-            margin-top: 15px;
-        }
-
-        /* Lista de Clientes Dinâmicos */
-        .titulo-sublista {
-            font-size: 0.9rem;
-            font-weight: bold;
-            color: #718096;
-            margin-top: 15px;
-            margin-bottom: 8px;
-        }
-
-        #lista-clientes {
-            list-style: none;
-        }
-
-        #lista-clientes li {
-            background-color: #f7fafc;
-            padding: 8px 12px;
-            border-radius: 4px;
-            margin-bottom: 6px;
-            font-size: 0.85rem;
-            border-left: 3px solid #3182ce;
-            color: #4a5568;
-        }
-
-        /* Lista Histórica de Cards de Livros (CSS Melhorado) */
-        .lista-livros-historico {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .card-livro {
-            display: flex;
-            background: #f7fafc;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-            gap: 12px;
-            align-items: center;
-            transition: transform 0.2s;
-        }
-
-        .card-livro:hover {
-            transform: translateY(-2px);
-        }
-
-        .card-livro img {
-            width: 60px;
-            height: 85px;
-            object-fit: cover;
-            border-radius: 4px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .card-livro-info {
-            flex: 1;
-        }
-
-        .card-livro-info h3 {
-            font-size: 0.95rem;
-            color: #1a202c;
-            margin-bottom: 4px;
-            line-height: 1.2;
-        }
-
-        .card-livro-info p {
-            color: #718096;
-            font-size: 0.8rem;
-            margin-bottom: 8px;
-        }
-
-        .btn-selecionar-livro {
-            background-color: #e2e8f0;
-            color: #4a5568;
-            padding: 6px 10px;
-            font-size: 0.75rem;
-            width: auto;
-            margin-top: 0;
-            display: inline-block;
-        }
-
-        .btn-selecionar-livro:hover {
-            background-color: #cbd5e0;
-        }
-
-        .btn-selecionar-livro.selecionado {
-            background-color: #38a169;
-            color: white;
-        }
-
-        /* Status de Feedback de Livro Selecionado */
-        #texto-feedback-livro {
-            font-size: 0.85rem;
-            color: #718096;
-            font-style: italic;
-            margin-bottom: 15px;
-        }
-
-        /* Lista de Empréstimos Ativos */
-        .card-emprestimo-ativo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: #f0fff4;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #c6f6d5;
-            margin-bottom: 10px;
-        }
-
-        .card-emprestimo-ativo img {
-            width: 40px;
-            height: 55px;
-            object-fit: cover;
-            border-radius: 3px;
-        }
-
-        .card-emprestimo-ativo-info h4 {
-            font-size: 0.9rem;
-            color: #22543d;
-        }
-
-        .card-emprestimo-ativo-info p {
-            font-size: 0.8rem;
-            color: #4a5568;
-        }
-    </style>
 </head>
+
 <body>
 
     <header>
         <h1>Biblioteca do Futuro</h1>
-        <p>Painel de Monitoramento e Controle em Tempo Real</p>
+        <p>Cadastro de Clientes</p>
     </header>
 
-    <div class="painel-grid">
+    <div class="quadro">
 
-        <div class="quadro">
-            <h2>👤 Via de Cadastro</h2>
-            
-            <div class="campo-grupo">
-                <label for="NomeCompleto">Nome do Cliente:</label>
-                <input type="text" id="NomeCompleto" placeholder="Ex: Carlos">
-            </div>
+        <h2>👤 Cadastro</h2>
 
-            <div class="campo-grupo">
-                <label for="CPF">CPF:</label>
-                <input type="text" id="CPF" class="input-destaque" placeholder="Ex: 873.657.890" maxlength="11">
-            </div>
-
-            <div class="campo-grupo">
-                <label for="Email">E-mail:</label>
-                <input type="email" id="Email" class="input-destaque" placeholder="Ex: carlos@gmail.com">
-            </div>
-
-            <button type="button" class="btn-azul" onclick="fazerLogin()">Cadastrar no Sistema</button>
-
-            <div class="titulo-sublista">Clientes Cadastrados:</div>
-            <div class="scroll-conteudo">
-                <ul id="lista-clientes"></ul>
-            </div>
+        <div class="campo-grupo">
+            <label>Nome</label>
+            <input type="text" id="NomeCompleto">
         </div>
 
-        <div class="quadro">
-            <h2>🔍 Busca de Acervo</h2>
-            
-            <div class="campo-grupo">
-                <label for="input-busca">Encontrar livro por título:</label>
-                <div class="busca-container">
-                    <input type="text" id="input-busca" placeholder="Ex: O Alquimista">
-                    <button type="button" id="btn-buscar" class="btn-cinza">Buscar</button>
-                </div>
-            </div>
-
-            <div id="resultado-busca" class="scroll-conteudo lista-livros-historico">
-                </div>
+        <div class="campo-grupo">
+            <label>CPF</label>
+            <input type="text" id="CPF">
         </div>
 
-        <div class="quadro">
-            <h2>📚 Movimentação de Empréstimo</h2>
-            
-            <div class="campo-grupo">
-                <label for="select-clientes">Selecione o Locatário:</label>
-                <select id="select-clientes">
-                    <option value="">-- Escolha um cliente --</option>
-                </select>
-            </div>
-
-            <div id="texto-feedback-livro">Nenhum livro pré-selecionado para empréstimo.</div>
-
-            <button type="button" class="btn-finalizarsecao btn-verde">Finalizar Empréstimo</button>
-
-            <div class="titulo-sublista">Empréstimos em Andamento (Vencimento em 7 dias):</div>
-            <div class="scroll-conteudo" id="registro-emprestimos-ativos">
-                </div>
+        <div class="campo-grupo">
+            <label>Email</label>
+            <input type="email" id="Email">
         </div>
+
+        <button class="btn-azul" onclick="fazerLogin()">
+            Cadastrar
+        </button>
+
+
+        <div class="titulo-sublista">
+            Clientes Cadastrados
+        </div>
+
+        <ul id="lista-clientes"></ul>
+
+         <a href="busca.html" class="btn-prosseguir">
+            Ir para Busca de Livros
+        </a>
 
     </div>
 
     <script src="script.js"></script>
+
 </body>
+
 </html>
